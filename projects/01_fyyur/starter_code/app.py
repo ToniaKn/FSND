@@ -68,9 +68,10 @@ class Artist(db.Model):
 class Show(db.Model):
     __tablename__ = 'Show'
     id = db.Column(db.Integer, primary_key=True)
+    start_time = db.Column(db.DateTime)
     venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'), nullable=False)
     artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'), nullable=False)
-    start_time = db.Column(db.DateTime)
+
 
 
 # ----------------------------------------------------------------------------#
@@ -122,7 +123,6 @@ def venues():
 
     return render_template('pages/venues.html', areas=venues)
 
-
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
     search = request.form.get('search_term', '')
@@ -158,14 +158,24 @@ def create_venue_form():
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
     error = False
+    form = VenueForm(request.form)
+    validation = form.validate()
+    if not validation:
+        errors = form.errors
+        msg = list(errors.keys())
+        message = ','.join(msg)
+        flash('Improper values for ' + message + ' fields')
+        return redirect(url_for('create_venue_form'))
+
     try:
-        venue = Venue(name=request.form['name'],
-                      city=request.form['city'],
-                      state=request.form['state'],
-                      address=request.form['address'],
-                      phone=request.form['phone'],
-                      facebook_link=request.form['facebook_link'],
-                      genres=request.form['genres'])
+        venue = Venue(name=form.data['name'],
+                      city=form.data['city'],
+                      state=form.data['state'],
+                      address=form.data['address'],
+                      phone=form.data['phone'],
+                      facebook_link=form.data['facebook_link'],
+                      genres=form.data['genres'],
+                      image_link = form.data['image_link'])
         db.session.add(venue)
         db.session.commit()
     except:
@@ -294,14 +304,24 @@ def create_artist_form():
 
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
+    form = ArtistForm(request.form)
+    validation = form.validate()
+    if not validation:
+        errors = form.errors
+        msg = list(errors.keys())
+        message = ','.join(msg)
+        flash('Improper values for ' + message + ' fields')
+        return redirect(url_for('create_venue_form'))
     error = False
     try:
-        artist = Artist(name=request.form['name'],
-                        city=request.form['city'],
-                        state=request.form['state'],
-                        phone=request.form['phone'],
-                        facebook_link=request.form['facebook_link'],
-                        genres=request.form['genres'])
+        artist = Artist(name=form.data['name'],
+                        city=form.data['city'],
+                        state=form.data['state'],
+                        phone=form.data['phone'],
+                        facebook_link=form.data['facebook_link'],
+                        genres=form.data['genres'],
+                        image_link=form.data['image_link'],)
+
         db.session.add(artist)
         db.session.commit()
     except:
