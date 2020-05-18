@@ -28,13 +28,10 @@ def get_drinks():
     drinks = Drink.query.all()
     drinks_short_formatted = [drink.short() for drink in drinks]
 
-    if len(drinks_short_formatted) != 0:
-        return jsonify(
-            {"success": True,
-             "drinks": drinks_short_formatted}
-        )
-    else:
-        abort(404)
+    return jsonify(
+        {"success": True,
+         "drinks": drinks_short_formatted}
+    )
 
 
 @app.route('/drinks-detail')
@@ -43,13 +40,10 @@ def get_drink_details(payload):
     drinks = Drink.query.all()
     drinks_long_formatted = [drink.long() for drink in drinks]
 
-    if len(drinks_long_formatted) != 0:
-        return jsonify(
-            {"success": True,
-             "drinks": drinks_long_formatted}
-        )
-    else:
-        abort(404)
+    return jsonify(
+        {"success": True,
+         "drinks": drinks_long_formatted}
+    )
 
 
 @app.route('/drinks', methods=['POST'])

@@ -54,7 +54,7 @@ def check_permissions(permission, payload):
         raise AuthError({
             'code': 'Permissions missing',
             'description': 'JWT body should include permission field.'
-        }, 400)
+        }, 401)
 
     if permission in permissions:
         return True
@@ -62,7 +62,7 @@ def check_permissions(permission, payload):
         raise AuthError({
             'code': 'Unauthorized',
             'description': 'Permission not found'
-        }, 403)
+        }, 401)
 
 
 def verify_decode_jwt(token):
